@@ -10,17 +10,27 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: 123456
       MYSQL_DATABASE: base
+    healthcheck:
+      test: mysql --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD -e 'SHOW DATABASES;'
+      timeout: 5s
+      retries: 5
     ports:
-      - "3300:3306"
+      - "3306:3306"
     volumes:
       - db:/var/lib/mysql
+    networks:
+      - backend
 
-  building:
+      building:
     build:
       context: .
       dockerfile: Dockerfile.maven
+    container_name: maven
     volumes:
-      - web_data:/App42PaaS/App42PaaS-Java-MySQL-Sample/target/
+      - web_data:/App42PaaS/App42PaaS-Java-MySQL-Sample/data
+      - data1:/App42PaaS/App42PaaS-Java-MySQL-Sample/config
+    networks:
+      - backend
 
   prod:
     depends_on:
@@ -33,7 +43,14 @@ services:
       - "8081:8080"
     volumes:
       - web_data:/usr/local/tomcat/webapps/
+      - data1:/usr/local/tomcat/ROOT/
+    networks:
+      - backend
 
 volumes:
   db:
   web_data:
+  data1:
+
+networks:
+  backend:
