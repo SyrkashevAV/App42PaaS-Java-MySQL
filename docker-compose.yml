@@ -6,10 +6,10 @@ services:
   database:
     image: mysql:5.7
     environment:
-      MYSQL_ROOT_PASSWORD: 12345678
-      MYSQL_USER: user
-      MYSQL_PASSWORD: 123456
-      MYSQL_DATABASE: base
+      MYSQL_ROOT_PASSWORD: app42
+      MYSQL_USER: app42
+      MYSQL_PASSWORD: app42
+      MYSQL_DATABASE: database
     healthcheck:
       test: mysql --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD -e 'SHOW DATABASES;'
       timeout: 5s
@@ -21,11 +21,10 @@ services:
     networks:
       - backend
 
-      building:
+  building:
     build:
       context: .
       dockerfile: Dockerfile.maven
-    container_name: maven
     volumes:
       - web_data:/App42PaaS/App42PaaS-Java-MySQL-Sample/data
       - data1:/App42PaaS/App42PaaS-Java-MySQL-Sample/config
@@ -49,6 +48,7 @@ services:
 
 volumes:
   db:
+    driver: local
   web_data:
   data1:
 
